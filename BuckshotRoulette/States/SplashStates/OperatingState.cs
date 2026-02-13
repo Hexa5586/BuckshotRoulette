@@ -8,9 +8,10 @@ public class OperatingState : IState
 {
     public int Handle(GlobalContext context)
     {
+        context.Configs.CurrentPage = 0; // Ensure the next time user enters configs, it starts from the first page
+
         SplashRenderer.RenderSplashScreen(context);
 
-        Console.WriteLine("");
         Console.Write("[SPLASH] GOTO > ");
         string? input = Console.ReadLine();
 
@@ -33,7 +34,7 @@ public class OperatingState : IState
                 context.CurrentState = new GameStates.InitializingState();
                 break;
             case "configs":
-                context.CurrentState = new ConfigStates.OperatingState();
+                context.CurrentState = new ConfigStates.OperatingState(ConfigStates.ConfigModeType.Reading);
                 break;
             case "close":
                 context.CurrentState = new EndingState();

@@ -9,6 +9,11 @@ namespace BuckshotRoulette.Simplified.Contexts;
 /// </summary>
 public class GlobalContext
 {
+    // --- Sub Contexts and Status ---
+    public RenderContext Render { get; private set; } = new RenderContext();
+    public ConfigsContext Configs { get; private set; } = new ConfigsContext();
+    public bool IsConfigModified { get; set; } = false;
+
     // --- Error Message ---
     private string _errorMessage = string.Empty;
     public string ErrorMessage
@@ -23,6 +28,7 @@ public class GlobalContext
         _errorMessage = "";
         return msg;
     }
+
 
     // --- Backing Fields for Validation ---
     private int _magazineSize;

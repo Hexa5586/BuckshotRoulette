@@ -6,6 +6,8 @@
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
 var context = new BuckshotRoulette.Simplified.Contexts.GlobalContext();
+
+context.Configs.Initialize();
 context.CurrentState = new BuckshotRoulette.Simplified.States.SplashStates.OperatingState(); // Start with the Splash State
 
 // The game loop: continues executing states until a state returns 1 (Ending State)

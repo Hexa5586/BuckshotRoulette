@@ -3,6 +3,7 @@ using BuckshotRoulette.Simplified.Renderers;
 using BuckshotRoulette.Simplified.States;
 using BuckshotRoulette.Simplified.Utilities;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace BuckshotRoulette.Simplified.States.GameStates;
 
@@ -47,10 +48,10 @@ public class OperatingState : IState
         switch (tokens[0])
         {
             case "shoot":
-                context.CurrentState = new ShootingState(tokens.GetRange(1, tokens.Count - 1));
+                context.CurrentState = new ShootingState(tokens.Skip(1).ToList());
                 break;
             case "item":
-                context.CurrentState = new ItemsEnablingState(tokens.GetRange(1, tokens.Count - 1));
+                context.CurrentState = new ItemsEnablingState(tokens.Skip(1).ToList());
                 break;
             case "quit":
                 context.CurrentState = new SplashStates.OperatingState();

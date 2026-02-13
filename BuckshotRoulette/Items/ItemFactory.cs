@@ -14,13 +14,13 @@ public static class ItemFactory
     {
         ItemType.Adrenaline => new Adrenaline(),
         ItemType.Beer => new Beer(),
-        ItemType.BurnerPhone => new Phone(),
+        ItemType.Phone => new Phone(),
         ItemType.Cigarette => new Cigarette(),
-        ItemType.ExpiredMedicine => new Medicine(),
+        ItemType.Medicine => new Medicine(),
         ItemType.Handcuffs => new Handcuffs(),
         ItemType.Handsaw => new Handsaw(),
         ItemType.Inverter => new Inverter(),
-        ItemType.MagnifyingGlass => new Magnifier(),
+        ItemType.Magnifier => new Magnifier(),
         _ => throw new ArgumentException($"Invalid item type: {type}")
     };
 

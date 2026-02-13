@@ -4,11 +4,11 @@ public enum ItemType
 {
     Adrenaline,
     Beer,
-    BurnerPhone,
+    Phone,
     Cigarette,
-    ExpiredMedicine,
+    Medicine,
     Handcuffs,
     Handsaw,
     Inverter,
-    MagnifyingGlass
+    Magnifier
 }

@@ -4,5 +4,5 @@ public enum PageType
 {
     Splash,
     Gaming,
-    Config
+    Configs
 }

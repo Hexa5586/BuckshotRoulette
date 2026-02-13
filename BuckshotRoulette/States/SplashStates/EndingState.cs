@@ -1,6 +1,6 @@
 ﻿using BuckshotRoulette.Simplified.Contexts;
 
-namespace BuckshotRoulette.Simplified.States;
+namespace BuckshotRoulette.Simplified.States.SplashStates;
 
 /// <summary>
 /// Represents the end of the game session.

@@ -9,41 +9,45 @@ public static class SplashRenderer
     {
         RenderingTools.ConsoleCompletelyClear();
 
-        RenderContext.AutoAdjustUISize();
+        context.Render.AutoAdjustUISize();
 
-        RenderContext.PrintLogo();
+        context.Render.PrintLogo();
 
         // Title bar
-        RenderContext.PrintTitle(PageType.Splash);
+        context.Render.PrintTitle(TitleType.Splash);
 
         // Top border
-        RenderContext.PrintInnerBorder();
+        context.Render.PrintInnerBorder();
 
         // Blank lines
-        RenderingTools.PrintBorderedBlankLines(RenderContext.GetHalvedBlankLineCount(PageType.Splash));
+        context.Render.PrintBorderedBlankLines(context.Render.GetHalvedBlankLineCount(PageType.Splash));
         
-        RenderingTools.PrintBorderedLine(""); // Blank line for spacing
-        RenderingTools.PrintBorderedLine("Welcome to Buckshot Roulette! For better display, please ensure the window is MAXIMIZED.");
-        RenderingTools.PrintBorderedLine(""); // Blank line for spacing
-        RenderingTools.PrintBorderedLine("You can always directly input an ENTER to refresh the UI.");
-        RenderingTools.PrintBorderedLine(""); // Blank line for spacing
-        RenderingTools.PrintBorderedLine("[   START   ]   Start the game;     ");
-        RenderingTools.PrintBorderedLine("[  CONFIGS  ]   Edit Configurations;");
-        RenderingTools.PrintBorderedLine("[   CLOSE   ]   Exit the game.      ");
-        RenderingTools.PrintBorderedLine(""); // Blank line for spacing
+        context.Render.PrintBorderedLine(""); // Blank line for spacing
+        context.Render.PrintBorderedLine("Welcome to Buckshot Roulette! For better display, please ensure the window is MAXIMIZED.");
+        context.Render.PrintBorderedLine(""); // Blank line for spacing
+        context.Render.PrintBorderedLine("You can always directly input an ENTER to refresh the UI.");
+        context.Render.PrintBorderedLine(""); // Blank line for spacing
+        context.Render.PrintBorderedLine("[   START   ]   Start the game;     ");
+        context.Render.PrintBorderedLine("[  CONFIGS  ]   Edit Configurations;");
+        context.Render.PrintBorderedLine("[   CLOSE   ]   Exit the game.      ");
+        context.Render.PrintBorderedLine(""); // Blank line for spacing
 
         // Blank lines
-        RenderingTools.PrintBorderedBlankLines(RenderContext.GetHalvedBlankLineCount(PageType.Splash));
+        context.Render.PrintBorderedBlankLines(context.Render.GetHalvedBlankLineCount(PageType.Splash) - context.Render.SPLASH_NOTNULL_HEIGHT % 2);
 
         // Bottom border
-        RenderContext.PrintInnerBorder();
+        context.Render.PrintInnerBorder();
 
         // Footer
-        RenderContext.PrintFooter();
+        context.Render.PrintFooter(FooterType.Splash);
 
-        RenderingTools.PrintLine("");
+        context.Render.PrintLine("");
 
-        // Consume and print error message if exists
-        RenderContext.PrintErrorMessage(context.ConsumeErrorMessage());
+        // Consume and print error messages
+        string message = context.ConsumeErrorMessage();
+        if (!string.IsNullOrWhiteSpace(message))
+        {
+            context.Render.PrintLine(RenderingTools.Colorize(message, ConsoleColor.Red));
+        }
     }
 }

@@ -37,28 +37,47 @@ public class ShootingState(List<string> args) : IState
         Debug.WriteLine($"BOOM! {context.GetName(context.ActivePlayer)} shot a {bullet} bullet at {context.GetName(target)}!");
         Debug.WriteLine($"{context.GetName(target)}: {previousHealth} -> {currentHealth}");
 
-        // Switch turns unless the passive player is cuffed, or the active player shot a blank at themselves
-        if (!(context.IsPassiveCuffed || targetNum == 1 && bullet == BulletType.Blank))
+
+        bool isSelfBlank = (targetNum == 1 && bullet == BulletType.Blank);
+
+        bool doUpdateTurn = !isSelfBlank;
+
+        bool doReleaseCuff = context.IsPassiveCuffed && !isSelfBlank;
+
+        bool doSwitch = !isSelfBlank && !context.IsPassiveCuffed;
+
+        bool doCutCd = (targetNum == 0) || (targetNum == 1 && bullet == BulletType.Real);
+
+        if (doSwitch)
         {
             context.SwitchActivePlayer();
         }
 
+        if (doCutCd)
+        {
+            if (context.GetCuffCdLeft(PlayerType.Player) > 0)
+            {
+                context.AdjustCuffCdLeft(PlayerType.Player, -1);
+            }
+            if (context.GetCuffCdLeft(PlayerType.Dealer) > 0)
+            {
+                context.AdjustCuffCdLeft(PlayerType.Dealer, -1);
+            }
+        }
+
+        if (doReleaseCuff)
+        {
+            context.IsPassiveCuffed = false;
+        }
+        
+        if (doUpdateTurn)
+        {
+            context.TurnCount++;
+        }
+        
         // Reset temporary combat flags
         context.IsMultipleDamaged = false;
-        context.IsPassiveCuffed = false;
 
-        // Cutting down remaining Handcuff cooling time
-        if (context.GetCuffCdLeft(PlayerType.Player) > 0)
-        {
-            context.AdjustCuffCdLeft(PlayerType.Player, -1);
-        }
-        if (context.GetCuffCdLeft(PlayerType.Dealer) > 0)
-        {
-            context.AdjustCuffCdLeft(PlayerType.Dealer, -1);
-        }
-
-        // Increment turn count and check for end conditions
-        context.TurnCount++;
         if (context.GetHealth(PlayerType.Player) <= 0)
         {
             GameRenderer.RenderGaming(context);

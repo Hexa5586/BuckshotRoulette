@@ -3,27 +3,31 @@ using BuckshotRoulette.Simplified.Utilities;
 
 namespace BuckshotRoulette.Simplified.Contexts;
 
-public static class RenderContext
+public class RenderContext
 {
-    public static int UI_WIDTH { get; private set; } = 150; // UI width in characters
-    public static int UI_HEIGHT { get; private set; } = 35; // UI height in lines, should be an odd number
-    public static int HP_BAR_WIDTH { get; private set; } = 40; // Width of the HP bar in characters
-    public static int GAMING_NOTNULL_HEIGHT { get; private set; } = 27; // Number of lines occupied by non-blank content (dealer info, magazine info, player info)
-    public static int SPLASH_NOTNULL_HEIGHT { get; private set; } = 12; // Number of lines occupied by non-blank content (title, borders, instructions)
-    public static int CONFIG_NOTNULL_HEIGHT { get; private set; } = 7; // Number of lines occupied by non-blank content (title, borders, instructions, config options)
-    public static int LOGO_HEIGHT { get; private set; } = 8; // Number of lines the logo occupies
-    public static int LOGO_WIDTH { get; private set; } = 114; // Approximate width of the logo in characters
-    public static int COMMAND_AREA_RESERVE_HEIGHT { get; private set; } = 5; // Minimum width to properly display the logo and borders
-    public static int BORDER_WIDTH { get; private set; } = 2; // Width of the borders on each side
-    public static string GAMING_TITLE { get; private set; } = "  Buckshot Roulette Simplified Edition - Gaming";
-    public static string SPLASH_TITLE { get; private set; } = "  Buckshot Roulette Simplified Edition";
-    public static string CONFIG_TITLE { get; private set; } = "  Buckshot Roulette Simplified Edition - Configuration";
-    public static string FOOTER { get; private set; } = "   By Hoshi-Inori";
+    public int UI_WIDTH { get; private set; } = 150; // UI width in characters
+    public int UI_HEIGHT { get; private set; } = 35; // UI height in lines, should be an odd number
+    public int HP_BAR_WIDTH { get; private set; } = 40; // Width of the HP bar in characters
+    public int GAMING_NOTNULL_HEIGHT { get; private set; } = 25; // Number of lines occupied by non-blank content (dealer info, magazine info, player info)
+    public int SPLASH_NOTNULL_HEIGHT { get; private set; } = 11; // Number of lines occupied by non-blank content (title, borders, instructions)
+    public int CONFIG_ITEM_WIDTH { get; private set; } = 50; // Width allocated for item display in the config page
+    public int LOGO_HEIGHT { get; private set; } = 8; // Number of lines the logo occupies
+    public int LOGO_WIDTH { get; private set; } = 114; // Approximate width of the logo in characters
+    public int COMMAND_AREA_RESERVE_HEIGHT { get; private set; } = 5; // Minimum width to properly display the logo and borders
+    public int BORDER_WIDTH { get; private set; } = 2; // Width of the borders on each side
+    public string GAMING_TITLE { get; private set; } = "  Buckshot Roulette Simplified Edition - Gaming";
+    public string SPLASH_TITLE { get; private set; } = "  Buckshot Roulette Simplified Edition";
+    public string CONFIGS_TITLE { get; private set; } = "  Buckshot Roulette Simplified Edition - Configuration";
+    public string CONFIGS_MODIFIED_TITLE { get; private set; } = "  Buckshot Roulette Simplified Edition - Configuration *";
+    public string GAMING_FOOTER { get; private set; } = "  [USAGE]  SHOOT 0 (Self) / 1 (Opponent); ITEM <itemIndex> [extraArgs...]; QUIT.";
+    public string SPLASH_FOOTER { get; private set; } = "  By Hoshi-Inori";
+    public string CONFIGS_READING_FOOTER { get; private set; } = "  [USAGE]  ←/→ : NAVIGATE PAGES; S: SAVE CHANGES; Enter: COMMAND MODE; Esc: RETURN TO SPLASH.";
+    public string CONFIGS_COMMAND_FOOTER { get; private set; } = "  [USAGE]  SET <configName> <value>; PREV; NEXT; SAVE; RESET; QUIT.";
 
     public const char BORDER_FULL = '\u2588'; // █
     public const char BORDER_SHADE = '\u2592'; // ▒
     public const char BORDER_LIGHT = '\u2591'; // ░
-    public readonly static Dictionary<ConsoleColor, string> ANSI_COLOR_MAP = new()
+    public static readonly Dictionary<ConsoleColor, string> ANSI_COLOR_MAP = new()
     {
         { ConsoleColor.Black,        "\u001b[30m" },
         { ConsoleColor.DarkRed,      "\u001b[31m" },
@@ -45,7 +49,7 @@ public static class RenderContext
     };
     public const string ANSI_COLOR_RESET = "\u001b[0m";
 
-    public static string LOGO { get; private set; } = @"
+    public static readonly string LOGO = @"
 __________               __           .__            __    __________             .__          __    __          
 \______   \__ __   ____ |  | __  _____|  |__   _____/  |_  \______   \ ____  __ __|  |   _____/  |__/  |_  ____  
  |    |  _/  |  \_/ ___\|  |/ / /  ___/  |  \ /  _ \   __\  |       _//  _ \|  |  \  | _/ __ \   __\   __\/ __ \ 
@@ -54,13 +58,43 @@ __________               __           .__            __    __________           
         \/            \/     \/     \/     \/                      \/                       \/                \/ 
 ";
 
-    public static void AutoAdjustUISize()
+    public void AutoAdjustUISize()
     {
         UI_WIDTH = Console.WindowWidth;
         UI_HEIGHT = Console.WindowHeight; // Leave some space for command input
     }
 
-    public static void PrintLogo()
+    // Print lines with borders and centered content; Contains auto-adjustment for UI width and height based on console size
+    public void PrintBorderedLine(string content)
+    {
+        int innerWidth = UI_WIDTH - 2 * BORDER_WIDTH;  // Account for borders and shading
+        string centeredContent = RenderingTools.CenterString(content, innerWidth);
+        Console.WriteLine($"{BORDER_FULL}{BORDER_SHADE}{centeredContent}{BORDER_SHADE}{BORDER_FULL}");
+    }
+
+    public void PrintLine(string text)
+    {
+        Console.WriteLine(RenderingTools.CenterString(text, UI_WIDTH));
+    }
+
+    public void PrintBlankLines(int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            PrintLine("");
+        }
+    }
+
+    public void PrintBorderedBlankLines(int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            PrintBorderedLine("");
+        }
+    }
+
+
+    public void PrintLogo()
     {
         AutoAdjustUISize();
 
@@ -72,21 +106,24 @@ __________               __           .__            __    __________           
         }
     }
 
-    public static void PrintTitle(PageType type)
+    public void PrintTitle(TitleType type)
     {
         Console.BackgroundColor = ConsoleColor.Gray;
         Console.ForegroundColor = ConsoleColor.Black;
         
         switch (type)
         {
-            case PageType.Splash:
+            case TitleType.Splash:
                 Console.WriteLine(SPLASH_TITLE + new string(' ', UI_WIDTH - SPLASH_TITLE.Length));
                 break;
-            case PageType.Gaming:
+            case TitleType.Gaming:
                 Console.WriteLine(GAMING_TITLE + new string(' ', UI_WIDTH - GAMING_TITLE.Length));
                 break;
-            case PageType.Config:
-                Console.WriteLine(CONFIG_TITLE + new string(' ', UI_WIDTH - CONFIG_TITLE.Length));
+            case TitleType.Configs:
+                Console.WriteLine(CONFIGS_TITLE + new string(' ', UI_WIDTH - CONFIGS_TITLE.Length));
+                break;
+            case TitleType.ConfigsModified:
+                Console.WriteLine(CONFIGS_MODIFIED_TITLE + new string(' ', UI_WIDTH - CONFIGS_MODIFIED_TITLE.Length));
                 break;
             default:
                 break;
@@ -95,36 +132,53 @@ __________               __           .__            __    __________           
         Console.ResetColor();
     }
 
-    public static void PrintFooter()
+    public void PrintFooter(FooterType type)
     {
         Console.BackgroundColor = ConsoleColor.Gray;
         Console.ForegroundColor = ConsoleColor.Black;
-        Console.WriteLine(FOOTER + new string(' ', UI_WIDTH - FOOTER.Length));
+
+        switch (type)
+        {
+            case FooterType.Splash:
+                Console.WriteLine(SPLASH_FOOTER + new string(' ', UI_WIDTH - SPLASH_FOOTER.Length));
+                break;
+            case FooterType.Gaming:
+                Console.WriteLine(GAMING_FOOTER + new string(' ', UI_WIDTH - GAMING_FOOTER.Length));
+                break;
+            case FooterType.ConfigsReading:
+                Console.WriteLine(CONFIGS_READING_FOOTER + new string(' ', UI_WIDTH - CONFIGS_READING_FOOTER.Length));
+                break;
+            case FooterType.ConfigsCommand:
+                Console.WriteLine(CONFIGS_COMMAND_FOOTER + new string(' ', UI_WIDTH - CONFIGS_COMMAND_FOOTER.Length));
+                break;
+            default:
+                break;
+        }
         Console.ResetColor();
     }
 
-    public static void PrintInnerBorder()
+    public void PrintInnerBorder()
     {
-        RenderingTools.PrintLine(BORDER_FULL + new string(BORDER_SHADE, UI_WIDTH - BORDER_WIDTH) + BORDER_FULL);
+        PrintLine(BORDER_FULL + new string(BORDER_SHADE, UI_WIDTH - BORDER_WIDTH) + BORDER_FULL);
     }
 
-    public static void PrintErrorMessage(string message)
+    public void PrintErrorMessage(string message)
     {
         if (!string.IsNullOrWhiteSpace(message))
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            RenderingTools.PrintLine("ERROR: " + message);
+            PrintLine("ERROR: " + message);
             Console.ResetColor();
         }
     }
 
-    public static int GetHalvedBlankLineCount(PageType type)
+    public int GetHalvedBlankLineCount(PageType type, int outerSource = 0)
     {
         int nonNullHeight = type switch
         {
             PageType.Splash => SPLASH_NOTNULL_HEIGHT,
             PageType.Gaming => GAMING_NOTNULL_HEIGHT,
-            PageType.Config => CONFIG_NOTNULL_HEIGHT,
+            PageType.Configs => outerSource, // For config page, the non-null height is determined by the number of config items
             _ => 0
         };
         return (UI_HEIGHT - nonNullHeight - LOGO_HEIGHT - COMMAND_AREA_RESERVE_HEIGHT) / 2;
