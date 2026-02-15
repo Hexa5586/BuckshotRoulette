@@ -29,11 +29,11 @@ public static class BulletTypeExtensions
     /// <summary>
     /// Returns the ASCII representation for UI rendering.
     /// </summary>
-    public static string GetAscii(this BulletType bullet) => bullet switch
+    public static string GetChar(this BulletType bullet) => bullet switch
     {
-        BulletType.Real => "O",
-        BulletType.Blank => "X",
-        BulletType.Unknown => "?",
+        BulletType.Real => "●",
+        BulletType.Blank => "○",
+        BulletType.Unknown => "-",
         _ => throw new ArgumentOutOfRangeException(nameof(bullet))
     };
 }

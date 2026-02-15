@@ -2,7 +2,7 @@
 
 namespace BuckshotRoulette.Simplified.States.ConfigStates;
 
-public class ResettingState : IState
+public class ResettingState : State
 {
     public int Handle(GlobalContext context)
     {

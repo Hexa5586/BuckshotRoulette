@@ -1,26 +1,34 @@
-﻿using BuckshotRoulette.Simplified.Utilities;
+﻿using BuckshotRoulette.Simplified.Contexts;
+using BuckshotRoulette.Simplified.Utilities;
 
 namespace BuckshotRoulette.Simplified.Items;
 
 /// <summary>
 /// Responsible for instantiating items based on type and generating random inventories.
 /// </summary>
-public static class ItemFactory
+public class ItemFactory
 {
+    private readonly LocaleContext _locale;
+    
+    public ItemFactory(LocaleContext locale)
+    {
+        _locale = locale;
+    }
+    
     /// <summary>
     /// Creates a specific IItem instance based on the provided ItemType.
     /// </summary>
-    public static IItem CreateItem(ItemType type) => type switch
+    public Item CreateItem(ItemType type) => type switch
     {
-        ItemType.Adrenaline => new Adrenaline(),
-        ItemType.Beer => new Beer(),
-        ItemType.Phone => new Phone(),
-        ItemType.Cigarette => new Cigarette(),
-        ItemType.Medicine => new Medicine(),
-        ItemType.Handcuffs => new Handcuffs(),
-        ItemType.Handsaw => new Handsaw(),
-        ItemType.Inverter => new Inverter(),
-        ItemType.Magnifier => new Magnifier(),
+        ItemType.Adrenaline => new Adrenaline(_locale.ITEM_ADRENALINE_NAME),
+        ItemType.Beer => new Beer(_locale.ITEM_BEER_NAME),
+        ItemType.Cigarette => new Cigarette(_locale.ITEM_CIGARETTE_NAME),
+        ItemType.Handcuffs => new Handcuffs(_locale.ITEM_HANDCUFFS_NAME),
+        ItemType.Handsaw => new Handsaw(_locale.ITEM_HANDSAW_NAME),
+        ItemType.Inverter => new Inverter(_locale.ITEM_INVERTER_NAME),
+        ItemType.Magnifier => new Magnifier(_locale.ITEM_MAGNIFIER_NAME),
+        ItemType.Medicine => new Medicine(_locale.ITEM_MEDICINE_NAME),
+        ItemType.Phone => new Phone(_locale.ITEM_PHONE_NAME),
         _ => throw new ArgumentException($"Invalid item type: {type}")
     };
 
@@ -29,7 +37,7 @@ public static class ItemFactory
     /// </summary>
     /// <param name="count">Number of items to generate.</param>
     /// <param name="itemWeights">A dictionary mapping ItemType to its appearance probability.</param>
-    public static List<IItem> CreateItemList(int count, Dictionary<ItemType, Double> itemWeights, bool forbidAdrenaline = false)
+    public List<Item> CreateItemList(int count, IReadOnlyDictionary<ItemType, Double> itemWeights, bool forbidAdrenaline = false)
     {
         // Optionally filter out Adrenaline if it's forbidden
         var filteredWeights = new Dictionary<ItemType, Double>(itemWeights);

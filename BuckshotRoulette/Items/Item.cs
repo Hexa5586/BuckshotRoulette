@@ -2,7 +2,7 @@
 
 namespace BuckshotRoulette.Simplified.Items;
 
-public interface IItem
+public interface Item
 {
     string Name { get; }
     void Use(GlobalContext context, List<string> args);

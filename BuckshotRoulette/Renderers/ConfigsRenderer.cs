@@ -6,7 +6,7 @@ namespace BuckshotRoulette.Simplified.Renderers;
 
 public static class ConfigsRenderer
 {
-    public static void RenderConfig(GlobalContext context, ConfigModeType type, bool modified)
+    public static void Render(GlobalView context, ConfigModeType type, bool modified)
     {
         int config_notnull_count = 10 + context.Configs.Groups[context.Configs.CurrentPage].ConfigNames.Count;
         int blanklines_count = context.Render.GetHalvedBlankLineCount(PageType.Configs, config_notnull_count);

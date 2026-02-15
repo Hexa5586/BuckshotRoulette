@@ -1,4 +1,7 @@
-﻿/// <summary>
+﻿// Code Stat Regex: ^b*[^:b#/]+.*$
+// Publish: dotnet publish -c Release -r <platform> -p:PublishSingleFile=true --self-contained true -p:DebugType=none
+
+/// <summary>
 /// The entry point of the Buckshot Roulette application.
 /// Initializes the game context and runs the execution loop until an exit signal (1) is received.
 /// </summary>
@@ -8,6 +11,8 @@ Console.OutputEncoding = System.Text.Encoding.UTF8;
 var context = new BuckshotRoulette.Simplified.Contexts.GlobalContext();
 
 context.Configs.Initialize();
+context.Locale.LoadLocale(context.Configs.Language);
+
 context.CurrentState = new BuckshotRoulette.Simplified.States.SplashStates.OperatingState(); // Start with the Splash State
 
 // The game loop: continues executing states until a state returns 1 (Ending State)

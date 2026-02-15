@@ -19,7 +19,7 @@ public static class RandomizeTools
         var candidates = new List<T> { objA, objB };
         var weights = new List<double> { probabilityOfA, 1.0 - probabilityOfA };
 
-        return RandomChoose(candidates, weights, 1).FirstOrDefault();
+        return RandomChoose(candidates, weights, 1).First();
     }
 
     /// <summary>

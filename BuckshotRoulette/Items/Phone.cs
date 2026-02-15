@@ -3,9 +3,14 @@ using System.Diagnostics;
 
 namespace BuckshotRoulette.Simplified.Items;
 
-public class Phone : IItem
+public class Phone : Item
 {
-    public string Name => "Phone";
+    public Phone(string name) : base()
+    {
+        Name = name;
+    }
+
+    public string Name { get; }
 
     public void Use(GlobalContext context, List<string> args)
     {
@@ -21,7 +26,7 @@ public class Phone : IItem
             throw new InvalidOperationException($"Invalid bullet index for {Name}.");
         }
 
-        var magazine = context.GetMagazine();
+        var magazine = context.Game.Magazine;
         if (bulletIdx < 0 || bulletIdx >= magazine.Count)
         {
             throw new InvalidOperationException($"Bullet index out of bounds for {Name}.");
@@ -35,7 +40,7 @@ public class Phone : IItem
 
         // Execute
         var bullet = magazine[bulletIdx];
-        context.UpdateKnowledge(context.ActivePlayer, bulletIdx, bullet);
+        context.GetActiveEntity().UpdateKnowledge(bulletIdx, bullet);
         Debug.WriteLine($"{Name} used: Bullet at index {bulletIdx} is a {bullet}.");
     }
 }

@@ -2,7 +2,7 @@
 
 namespace BuckshotRoulette.Simplified.States.ConfigStates;
 
-public class PageTurningState : IState
+public class PageTurningState : State
 {
     private int _step = 0;
 

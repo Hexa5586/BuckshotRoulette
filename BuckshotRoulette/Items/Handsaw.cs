@@ -6,9 +6,14 @@ namespace BuckshotRoulette.Simplified.Items;
 /// <summary>
 /// Increases the damage of the next bullet by a multiplier.
 /// </summary>
-public class Handsaw : IItem
+public class Handsaw : Item
 {
-    public string Name => "Handsaw";
+    public Handsaw(string name) : base()
+    {
+        Name = name;
+    }
+
+    public string Name { get; }
 
     public void Use(GlobalContext context, List<string> args)
     {
@@ -19,7 +24,7 @@ public class Handsaw : IItem
         }
 
         // Execute
-        context.IsMultipleDamaged = true;
+        context.Game.IsMultipleDamaged = true;
         Debug.WriteLine($"{Name} used: The next bullet will deal multiplied damage.");
     }
 }

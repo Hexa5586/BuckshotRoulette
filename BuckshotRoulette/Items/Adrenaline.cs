@@ -3,9 +3,14 @@ using System.Diagnostics;
 
 namespace BuckshotRoulette.Simplified.Items;
 
-public class Adrenaline : IItem
+public class Adrenaline : Item
 {
-    public string Name => "Adrenaline";
+    public Adrenaline(string name) : base()
+    {
+        Name = name;
+    }
+
+    public string Name { get; }
 
     public void Use(GlobalContext context, List<string> args)
     {
@@ -17,7 +22,7 @@ public class Adrenaline : IItem
         if (!int.TryParse(args[0], out int targetIdx))
             throw new InvalidOperationException($"Invalid item index for {Name}.");
 
-        var opponentItems = context.GetItems(context.PassivePlayer);
+        var opponentItems = context.GetPassiveEntity().Items;
         if (targetIdx < 0 || targetIdx >= opponentItems.Count)
             throw new InvalidOperationException($"Item index {targetIdx} out of bounds for {Name}.");
 
@@ -26,8 +31,8 @@ public class Adrenaline : IItem
             throw new InvalidOperationException("You cannot use Adrenaline to steal another Adrenaline.");
 
         // Execute
-        IItem stolenItem = context.DrawItem(context.PassivePlayer, targetIdx);
-        context.ExtendItems(context.ActivePlayer, new List<IItem> { stolenItem });
+        Item stolenItem = context.GetPassiveEntity().DrawItem(targetIdx);
+        context.GetActiveEntity().Items.Add(stolenItem);
 
         Debug.WriteLine($"{Name} used: Stole [{stolenItem.Name}] from opponent.");
     }

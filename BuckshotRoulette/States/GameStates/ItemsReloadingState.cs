@@ -6,7 +6,7 @@ namespace BuckshotRoulette.Simplified.States.GameStates;
 /// <summary>
 /// State responsible for replenishing items for both the player and the dealer.
 /// </summary>
-public class ItemsReloadingState : IState
+public class ItemsReloadingState : State
 {
     private bool _initializing;
     public ItemsReloadingState(bool initializing = false)
@@ -17,8 +17,8 @@ public class ItemsReloadingState : IState
     public int Handle(GlobalContext context)
     {
         // Re-initialize items using the ItemFactory
-        context.RefillItems(PlayerType.Player, _initializing);
-        context.RefillItems(PlayerType.Dealer, _initializing);
+        context.Player.RefillItems(_initializing);
+        context.Dealer.RefillItems(_initializing);
 
         context.CurrentState = new ReloadingState();
         return 0;

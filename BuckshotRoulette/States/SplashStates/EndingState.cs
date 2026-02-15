@@ -5,7 +5,7 @@ namespace BuckshotRoulette.Simplified.States.SplashStates;
 /// <summary>
 /// Represents the end of the game session.
 /// </summary>
-public class EndingState : IState
+public class EndingState : State
 {
     public int Handle(GlobalContext context)
     {

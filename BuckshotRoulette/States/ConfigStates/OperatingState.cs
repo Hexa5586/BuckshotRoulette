@@ -5,7 +5,7 @@ using System.Net.Http.Headers;
 
 namespace BuckshotRoulette.Simplified.States.ConfigStates;
 
-public class OperatingState : IState
+public class OperatingState : State
 {
     private ConfigModeType _mode;
 
@@ -31,9 +31,9 @@ public class OperatingState : IState
 
     private void HandleCommandMode(GlobalContext context)
     {
-        ConfigsRenderer.RenderConfig(context, _mode, context.IsConfigModified);
+        ConfigsRenderer.Render(context, _mode, context.IsConfigModified);
 
-        Console.Write("[CONFIGS] COMMANDS > ");
+        Console.Write(context.Locale.CONFIGS_COMMAND_PROMPT);
         string? input = Console.ReadLine();
         if (!string.IsNullOrWhiteSpace(input))
         {
@@ -43,7 +43,7 @@ public class OperatingState : IState
 
     private void HandleReadingMode(GlobalContext context)
     {
-        ConfigsRenderer.RenderConfig(context, _mode, context.IsConfigModified);
+        ConfigsRenderer.Render(context, _mode, context.IsConfigModified);
 
         var keyInfo = Console.ReadKey(true);
 

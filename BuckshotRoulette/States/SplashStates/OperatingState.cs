@@ -4,15 +4,15 @@ using BuckshotRoulette.Simplified.States;
 
 namespace BuckshotRoulette.Simplified.States.SplashStates;
 
-public class OperatingState : IState
+public class OperatingState : State
 {
     public int Handle(GlobalContext context)
     {
         context.Configs.CurrentPage = 0; // Ensure the next time user enters configs, it starts from the first page
 
-        SplashRenderer.RenderSplashScreen(context);
+        SplashRenderer.Render(context);
 
-        Console.Write("[SPLASH] GOTO > ");
+        Console.Write(context.Locale.SPLASH_PROMPT);
         string? input = Console.ReadLine();
 
         if (!string.IsNullOrWhiteSpace(input))

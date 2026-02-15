@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace BuckshotRoulette.Simplified.States.GameStates;
 
-public class ItemsEnablingState(List<string> args) : IState
+public class ItemsEnablingState(List<string> args) : State
 {
     private readonly List<string> _args = args;
 
@@ -18,17 +18,17 @@ public class ItemsEnablingState(List<string> args) : IState
         if (!int.TryParse(_args[0], out int itemIndex))
             throw new FormatException($"Invalid item index '{_args[0]}'.");
 
-        var inventory = context.GetItems(context.ActivePlayer);
+        var inventory = context.GetActiveEntity().Items;
         if (itemIndex < 0 || itemIndex >= inventory.Count)
             throw new ArgumentException($"Item index {itemIndex} is out of bounds.");
 
             
-        IItem item = inventory[itemIndex];
+        Item item = inventory[itemIndex];
             
         var extraArgs = _args.Skip(1).ToList();
 
         item.Use(context, extraArgs);
-        context.DrawItem(context.ActivePlayer, itemIndex);
+        context.GetActiveEntity().DrawItem(itemIndex);
 
         return 0;
     }

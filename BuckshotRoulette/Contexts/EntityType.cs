@@ -3,7 +3,7 @@
 /// <summary>
 /// Defines the types of participants in the game.
 /// </summary>
-public enum PlayerType
+public enum EntityType
 {
     /// <summary>The human participant.</summary>
     Player,

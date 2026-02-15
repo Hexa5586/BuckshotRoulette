@@ -5,34 +5,34 @@ namespace BuckshotRoulette.Simplified.Renderers;
 
 public static class GameRenderer
 {
-    public static void RenderGaming(GlobalContext context)
+    public static void Render(GlobalView view)
     {
         RenderingTools.ConsoleCompletelyClear();
-        context.Render.AutoAdjustUISize();
-        context.Render.PrintLogo();
-        context.Render.PrintTitle(TitleType.Gaming);
-        context.Render.PrintInnerBorder();
+        view.Render.AutoAdjustUISize();
+        view.Render.PrintLogo();
+        view.Render.PrintTitle(TitleType.Gaming);
+        view.Render.PrintInnerBorder();
 
-        RenderEntity(PlayerType.Dealer, context);
+        RenderEntity(EntityType.Dealer, view);
 
-        context.Render.PrintBorderedBlankLines(context.Render.GetHalvedBlankLineCount(PageType.Gaming));
-        RenderMagazineInfo(context);
-        context.Render.PrintBorderedBlankLines(context.Render.GetHalvedBlankLineCount(PageType.Gaming) - context.Render.GAMING_NOTNULL_HEIGHT % 2);
+        view.Render.PrintBorderedBlankLines(view.Render.GetHalvedBlankLineCount(PageType.Gaming));
+        RenderMagazineInfo(view);
+        view.Render.PrintBorderedBlankLines(view.Render.GetHalvedBlankLineCount(PageType.Gaming) - view.Render.GAMING_NOTNULL_HEIGHT % 2);
 
-        RenderEntity(PlayerType.Player, context);
+        RenderEntity(EntityType.Player, view);
 
-        context.Render.PrintInnerBorder();
-        context.Render.PrintFooter(FooterType.Gaming);
-        context.Render.PrintLine("");
+        view.Render.PrintInnerBorder();
+        view.Render.PrintFooter(FooterType.Gaming);
+        view.Render.PrintLine("");
 
-        string message = context.ConsumeErrorMessage();
+        string message = view.ConsumeErrorMessage();
         if (!string.IsNullOrWhiteSpace(message))
         {
-            context.Render.PrintLine(RenderingTools.Colorize(message, ConsoleColor.Red));
+            view.Render.PrintLine(RenderingTools.Colorize(message, ConsoleColor.Red));
         }
     }
 
-    private static void RenderEntity(PlayerType type, GlobalContext context)
+    private static void RenderEntity(EntityType type, GlobalView context)
     {
         context.Render.AutoAdjustUISize();
         context.Render.PrintBorderedLine("");
@@ -50,11 +50,11 @@ public static class GameRenderer
         context.Render.PrintBorderedLine("");
     }
 
-    private static void RenderHP(PlayerType type, GlobalContext context)
+    private static void RenderHP(EntityType type, GlobalView context)
     {
-        int hp = context.GetHealth(type);
-        int maxHp = context.GetMaxHealth(type);
-        string label = context.GetName(type);
+        int hp = context.GetEntity(type).Health;
+        int maxHp = context.GetEntity(type).MaxHealth;
+        string label = context.GetEntity(type).Name;
 
         ConsoleColor hpColor = (hp * 100 / maxHp <= 25) ? ConsoleColor.Red : Console.ForegroundColor;
         int filledLength = hp * context.Render.HP_BAR_WIDTH / maxHp;
@@ -64,53 +64,56 @@ public static class GameRenderer
         context.Render.PrintBorderedLine($"{label}   {RenderingTools.Colorize($"{hpBar}  {hp}/{maxHp}", hpColor)}");
     }
 
-    private static void RenderStatus(PlayerType type, GlobalContext context)
+    private static void RenderStatus(EntityType type, GlobalView context)
     {
-        string cuffed = (context.ActivePlayer != type && context.IsPassiveCuffed)
-            ? RenderingTools.Colorize("< CUFFED >", ConsoleColor.Red) : "";
-        string cooldown = (context.GetCuffCdLeft(type) > 0)
-            ? RenderingTools.Colorize($"< HANDCUFFS COOLING ({context.GetCuffCdLeft(type)}) >", ConsoleColor.Yellow) : "";
-        string empty = (string.IsNullOrEmpty(cuffed) && string.IsNullOrEmpty(cooldown)) ? "<EMPTY>" : "";
+        var statusDict = context.GetEntity(type).GetStatus();
 
-        context.Render.PrintBorderedLine($"STATUS   {empty}{cuffed}  {cooldown}");
+        context.Render.PrintBorderedLine($"{context.Locale.STATUS_LABEL}   {string.Join("  ", statusDict.Select(item => 
+            RenderingTools.Colorize(item.Value, item.Key)))}");
     }
 
-    private static void RenderItems(PlayerType type, GlobalContext context)
+    private static void RenderItems(EntityType type, GlobalView context)
     {
-        var items = context.GetItems(type);
+        var items = context.GetEntity(type).Items;
         string content = items.Any()
-            ? string.Join("  ", items.Select((item, i) => $"[{i + 1}]{item.Name}"))
-            : "<EMPTY>";
-        context.Render.PrintBorderedLine("ITEMS   " + content);
+            ? string.Join("  ", items.Select((item, i) => $"[{i}]{item.Name}"))
+            : $"{context.Locale.ITEMS_LABEL}";
+        context.Render.PrintBorderedLine($"{context.Locale.ITEMS_LABEL}   " + content);
     }
 
-    private static void RenderKnowledges(PlayerType type, GlobalContext context)
+    private static void RenderKnowledges(EntityType type, GlobalView context)
     {
         string knowledgeStr;
-        if (context.ActivePlayer == type)
+        if (context.Game.ActiveEntity == type)
         {
-            var list = context.GetKnowledge(type);
+            var list = context.GetEntity(type).Knowledge;
             knowledgeStr = (list != null && list.Any())
-                ? $"[ {string.Join("  ", list.Select(k => k.GetAscii()))} ]"
-                : "NONE";
+                ? $"[ {string.Join("  ", list.Select(k => k.GetChar()))} ]"
+                : $"{context.Locale.EMPTY_LABEL}";
         }
         else
         {
-            string noise = string.Join("  ", Enumerable.Repeat("?", context.GetMagazine().Count));
-            knowledgeStr = $"[ {noise} ]";
+            string noise = string.Join("  ", new string(RenderContext.BORDER_LIGHT, context.Game.Magazine.Count * 3 + 2));
+            knowledgeStr = $"{noise}";
         }
-        context.Render.PrintBorderedLine("KNOWLEDGES   " + knowledgeStr);
+        context.Render.PrintBorderedLine($"{context.Locale.KNOWLEDGE_LABEL}   " + knowledgeStr);
     }
 
-    private static void RenderMagazineInfo(GlobalContext context)
+    private static void RenderMagazineInfo(GlobalView context)
     {
         context.Render.AutoAdjustUISize();
         context.Render.PrintBorderedLine(new string(RenderContext.BORDER_LIGHT, context.Render.UI_WIDTH - 2 * context.Render.BORDER_WIDTH));
         context.Render.PrintBorderedLine("");
 
-        ConsoleColor color = context.IsMultipleDamaged ? ConsoleColor.Green : Console.ForegroundColor;
-        string dmgInfo = context.IsMultipleDamaged ? $"DAMAGE x{context.HandsawMultiplier}" : "DAMAGE x1";
-        string ammoInfo = $"MAGAZINE  [ REAL  {context.GetRemainingRealCount()}  |  {context.GetMagazine().Count}  TOTAL ]   {RenderingTools.Colorize(dmgInfo, color)}";
+        ConsoleColor color = context.Game.IsMultipleDamaged
+            ? ConsoleColor.Green : Console.ForegroundColor;
+        string dmgInfo = context.Game.IsMultipleDamaged
+            ? $"{context.Locale.MAGAZINE_DAMAGE_LABEL} x{context.Game.HandsawMultiplier}"
+            : $"{context.Locale.MAGAZINE_DAMAGE_LABEL} x1";
+        string ammoInfo = $"{context.Locale.MAGAZINE_LABEL}" +
+            $"  [ {context.Locale.MAGAZINE_REAL_LABEL}  {context.Game.GetRealBulletCount()}  |  {context.Game.Magazine.Count}" +
+            $"  {context.Locale.MAGAZINE_TOTAL_LABEL} ]" +
+            $"  {RenderingTools.Colorize(dmgInfo, color)}";
 
         context.Render.PrintBorderedLine(ammoInfo);
         context.Render.PrintBorderedLine("");

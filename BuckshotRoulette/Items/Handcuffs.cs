@@ -6,9 +6,14 @@ namespace BuckshotRoulette.Simplified.Items;
 /// <summary>
 /// Skips the opponent's next turn by applying the 'cuffed' status.
 /// </summary>
-public class Handcuffs : IItem
+public class Handcuffs : Item
 {
-    public string Name => "Handcuffs";
+    public Handcuffs(string name) : base()
+    {
+        Name = name;
+    }
+
+    public string Name { get; }
 
     public void Use(GlobalContext context, List<string> args)
     {
@@ -19,14 +24,14 @@ public class Handcuffs : IItem
         }
 
         // Check Cooling Down
-        if (context.GetCuffCdLeft(context.ActivePlayer) > 0)
+        if (context.GetActiveEntity().CuffCdLeft > 0)
         {
-            throw new InvalidOperationException($"{Name} are cooling down for {context.GetCuffCdLeft(context.ActivePlayer)} more turn(s).");
+            throw new InvalidOperationException($"{Name} are cooling down for {context.GetActiveEntity().CuffCdLeft} more turn(s).");
         }
 
         // Execute
-        context.IsPassiveCuffed = true;
-        context.AdjustCuffCdLeft(context.ActivePlayer, context.CuffUsingCd);
-        Debug.WriteLine($"{Name} used: Cuffed {context.GetName(context.PassivePlayer)}. Handcuffs will cool down for 2 turns.");
+        context.Game.IsPassiveCuffed = true;
+        context.GetActiveEntity().CuffCdLeft = context.Game.CuffUsingCd;
+        Debug.WriteLine($"{Name} used: Cuffed {context.GetPassiveEntity().Name}. Handcuffs will cool down for 2 turns.");
     }
 }

@@ -1,4 +1,6 @@
 ﻿using BuckshotRoulette.Simplified.Contexts;
+using System.Reflection;
+using Wcwidth;
 
 namespace BuckshotRoulette.Simplified.Utilities;
 
@@ -34,7 +36,15 @@ public static class RenderingTools
     public static int GetVisibleLength(string s)
     {
         if (string.IsNullOrEmpty(s)) return 0;
-        return System.Text.RegularExpressions.Regex.Replace(s, @"\u001b\[[0-9;]*m", "").Length;
+
+        string cleanString = System.Text.RegularExpressions.Regex.Replace(s, @"\u001b\[[0-9;]*m", "");
+
+        int width = 0;
+        foreach (char c in cleanString)
+        {
+            width += Wcwidth.UnicodeCalculator.GetWidth(c);
+        }
+        return width;
     }
 
     public static string Colorize(string? text, ConsoleColor color)

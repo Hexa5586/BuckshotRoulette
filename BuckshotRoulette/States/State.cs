@@ -5,7 +5,7 @@ namespace BuckshotRoulette.Simplified.States;
 /// <summary>
 /// Defines the contract for all game states in the Buckshot Roulette state machine.
 /// </summary>
-public interface IState
+public interface State
 {
     /// <summary>
     /// Processes the logic for the current state.

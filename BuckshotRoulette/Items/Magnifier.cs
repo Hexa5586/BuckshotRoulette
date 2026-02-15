@@ -6,9 +6,14 @@ namespace BuckshotRoulette.Simplified.Items;
 /// <summary>
 /// Allows the player to see the type of the next bullet in the magazine.
 /// </summary>
-public class Magnifier : IItem
+public class Magnifier : Item
 {
-    public string Name => "Magnifier";
+    public Magnifier(string name) : base()
+    {
+        Name = name;
+    }
+
+    public string Name { get; }
 
     public void Use(GlobalContext context, List<string> args)
     {
@@ -19,8 +24,8 @@ public class Magnifier : IItem
         }
 
         // Execute
-        var bullet = context.GetMagazine().First();
-        context.UpdateKnowledge(context.ActivePlayer, 0, bullet);
+        var bullet = context.Game.Magazine.First();
+        context.GetActiveEntity().UpdateKnowledge(0, bullet);
         Debug.WriteLine($"{Name} used: Next bullet is a {bullet.GetName()} bullet.");
     }
 }

@@ -7,9 +7,14 @@ namespace BuckshotRoulette.Simplified.Items;
 /// <summary>
 /// A high-risk item that either heals significantly or causes damage based on probability.
 /// </summary>
-public class Medicine : IItem
+public class Medicine : Item
 {
-    public string Name => "Medicine";
+    public Medicine(string name) : base()
+    {
+        Name = name;
+    }
+
+    public string Name { get; }
 
     public void Use(GlobalContext context, List<string> args)
     {
@@ -20,10 +25,8 @@ public class Medicine : IItem
         }
 
         // Cannot use if health is already at max
-        int currentHealth = context.GetHealth(context.ActivePlayer);
-        int maxHealth = context.ActivePlayer == PlayerType.Player
-            ? context.PlayerMaxHealth
-            : context.DealerMaxHealth;
+        int currentHealth = context.GetActiveEntity().Health;
+        int maxHealth = context.GetActiveEntity().MaxHealth;
 
         if (currentHealth >= maxHealth)
         {
@@ -33,15 +36,16 @@ public class Medicine : IItem
         // Execute
         // Probabilistically determine if the effect is a cure or damage
         int healthChange = RandomizeTools.DrawAOrB(
-            context.MedicineValidProbability,
-            context.MedicineCure,
-            -context.MedicineDamage
+            context.Game.MedicineValidProbability,
+            context.Game.MedicineCure,
+            -context.Game.MedicineDamage
         );
 
-        int preHealth = context.GetHealth(context.ActivePlayer);
-        context.AdjustHealth(context.ActivePlayer, healthChange);
+        int preHealth = context.GetActiveEntity().Health;
+        context.GetActiveEntity().AdjustHealth(healthChange);
+        int nowHealth = context.GetActiveEntity().Health;
 
         string effect = healthChange > 0 ? "Healed" : "Hurt";
-        Debug.WriteLine($"{Name} used ({effect}): Health {preHealth} -> {context.GetHealth(context.ActivePlayer)}");
+        Debug.WriteLine($"{Name} used: ({effect})! Health {preHealth} -> {nowHealth}");
     }
 }

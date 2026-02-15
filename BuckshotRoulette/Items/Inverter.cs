@@ -6,9 +6,14 @@ namespace BuckshotRoulette.Simplified.Items;
 /// <summary>
 /// Switches the type of the next bullet (Real to Blank, or vice versa).
 /// </summary>
-public class Inverter : IItem
+public class Inverter : Item
 {
-    public string Name => "Inverter";
+    public Inverter(string name) : base()
+    {
+        Name = name;
+    }
+
+    public string Name { get; }
 
     public void Use(GlobalContext context, List<string> args)
     {
@@ -17,8 +22,8 @@ public class Inverter : IItem
             throw new InvalidOperationException($"{Name} does not take extra arguments.");
         }
 
-        context.SwitchMagazineTop();
-        context.CorrectKnowledge(context.ActivePlayer);
+        context.Game.SwitchMagazineTop();
+        context.GetActiveEntity().SwitchKnowledgeTop();
         Debug.WriteLine($"{Name} used: The type of the next bullet has been inverted.");
     }
 }

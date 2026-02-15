@@ -1,29 +1,29 @@
 ﻿using BuckshotRoulette.Simplified.Renderers;
 using BuckshotRoulette.Simplified.Utilities;
+using System.Reflection;
 
 namespace BuckshotRoulette.Simplified.Contexts;
 
 public class RenderContext
 {
+    private readonly LocaleContext _locale;
+
+    public RenderContext(LocaleContext locale)
+    {
+        _locale = locale;
+    }
+    
     public int UI_WIDTH { get; private set; } = 150; // UI width in characters
     public int UI_HEIGHT { get; private set; } = 35; // UI height in lines, should be an odd number
     public int HP_BAR_WIDTH { get; private set; } = 40; // Width of the HP bar in characters
     public int GAMING_NOTNULL_HEIGHT { get; private set; } = 25; // Number of lines occupied by non-blank content (dealer info, magazine info, player info)
-    public int SPLASH_NOTNULL_HEIGHT { get; private set; } = 11; // Number of lines occupied by non-blank content (title, borders, instructions)
+    public int SPLASH_NOTNULL_HEIGHT { get; private set; } = 13; // Number of lines occupied by non-blank content (title, borders, instructions)
     public int CONFIG_ITEM_WIDTH { get; private set; } = 50; // Width allocated for item display in the config page
     public int LOGO_HEIGHT { get; private set; } = 8; // Number of lines the logo occupies
     public int LOGO_WIDTH { get; private set; } = 114; // Approximate width of the logo in characters
     public int COMMAND_AREA_RESERVE_HEIGHT { get; private set; } = 5; // Minimum width to properly display the logo and borders
     public int BORDER_WIDTH { get; private set; } = 2; // Width of the borders on each side
-    public string GAMING_TITLE { get; private set; } = "  Buckshot Roulette Simplified Edition - Gaming";
-    public string SPLASH_TITLE { get; private set; } = "  Buckshot Roulette Simplified Edition";
-    public string CONFIGS_TITLE { get; private set; } = "  Buckshot Roulette Simplified Edition - Configuration";
-    public string CONFIGS_MODIFIED_TITLE { get; private set; } = "  Buckshot Roulette Simplified Edition - Configuration *";
-    public string GAMING_FOOTER { get; private set; } = "  [USAGE]  SHOOT 0 (Self) / 1 (Opponent); ITEM <itemIndex> [extraArgs...]; QUIT.";
-    public string SPLASH_FOOTER { get; private set; } = "  By Hoshi-Inori";
-    public string CONFIGS_READING_FOOTER { get; private set; } = "  [USAGE]  ←/→ : NAVIGATE PAGES; S: SAVE CHANGES; Enter: COMMAND MODE; Esc: RETURN TO SPLASH.";
-    public string CONFIGS_COMMAND_FOOTER { get; private set; } = "  [USAGE]  SET <configName> <value>; PREV; NEXT; SAVE; RESET; QUIT.";
-
+    
     public const char BORDER_FULL = '\u2588'; // █
     public const char BORDER_SHADE = '\u2592'; // ▒
     public const char BORDER_LIGHT = '\u2591'; // ░
@@ -62,6 +62,15 @@ __________               __           .__            __    __________           
     {
         UI_WIDTH = Console.WindowWidth;
         UI_HEIGHT = Console.WindowHeight; // Leave some space for command input
+    }
+
+    public string GetVersionString()
+    {
+        var versionAttribute = Assembly.GetExecutingAssembly()
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>();
+
+        string displayVersion = "v" + versionAttribute?.InformationalVersion ?? $"<{_locale.UNKNOWN_VERSION_LABEL}>";
+        return displayVersion;
     }
 
     // Print lines with borders and centered content; Contains auto-adjustment for UI width and height based on console size
@@ -114,16 +123,20 @@ __________               __           .__            __    __________           
         switch (type)
         {
             case TitleType.Splash:
-                Console.WriteLine(SPLASH_TITLE + new string(' ', UI_WIDTH - SPLASH_TITLE.Length));
+                Console.WriteLine(_locale.SPLASH_TITLE 
+                    + new string(' ', UI_WIDTH - RenderingTools.GetVisibleLength(_locale.SPLASH_TITLE)));
                 break;
             case TitleType.Gaming:
-                Console.WriteLine(GAMING_TITLE + new string(' ', UI_WIDTH - GAMING_TITLE.Length));
+                Console.WriteLine(_locale.GAMING_TITLE 
+                    + new string(' ', UI_WIDTH - RenderingTools.GetVisibleLength(_locale.GAMING_TITLE)));
                 break;
             case TitleType.Configs:
-                Console.WriteLine(CONFIGS_TITLE + new string(' ', UI_WIDTH - CONFIGS_TITLE.Length));
+                Console.WriteLine(_locale.CONFIGS_TITLE 
+                    + new string(' ', UI_WIDTH - RenderingTools.GetVisibleLength(_locale.CONFIGS_TITLE)));
                 break;
             case TitleType.ConfigsModified:
-                Console.WriteLine(CONFIGS_MODIFIED_TITLE + new string(' ', UI_WIDTH - CONFIGS_MODIFIED_TITLE.Length));
+                Console.WriteLine(_locale.CONFIGS_MODIFIED_TITLE 
+                    + new string(' ', UI_WIDTH - RenderingTools.GetVisibleLength(_locale.CONFIGS_MODIFIED_TITLE)));
                 break;
             default:
                 break;
@@ -140,16 +153,20 @@ __________               __           .__            __    __________           
         switch (type)
         {
             case FooterType.Splash:
-                Console.WriteLine(SPLASH_FOOTER + new string(' ', UI_WIDTH - SPLASH_FOOTER.Length));
+                Console.WriteLine(_locale.SPLASH_FOOTER 
+                    + new string(' ', UI_WIDTH - RenderingTools.GetVisibleLength(_locale.SPLASH_FOOTER)));
                 break;
             case FooterType.Gaming:
-                Console.WriteLine(GAMING_FOOTER + new string(' ', UI_WIDTH - GAMING_FOOTER.Length));
+                Console.WriteLine(_locale.GAMING_FOOTER 
+                    + new string(' ', UI_WIDTH - RenderingTools.GetVisibleLength(_locale.GAMING_FOOTER)));
                 break;
             case FooterType.ConfigsReading:
-                Console.WriteLine(CONFIGS_READING_FOOTER + new string(' ', UI_WIDTH - CONFIGS_READING_FOOTER.Length));
+                Console.WriteLine(_locale.CONFIGS_READING_FOOTER 
+                    + new string(' ', UI_WIDTH - RenderingTools.GetVisibleLength(_locale.CONFIGS_READING_FOOTER)));
                 break;
             case FooterType.ConfigsCommand:
-                Console.WriteLine(CONFIGS_COMMAND_FOOTER + new string(' ', UI_WIDTH - CONFIGS_COMMAND_FOOTER.Length));
+                Console.WriteLine(_locale.CONFIGS_COMMAND_FOOTER 
+                    + new string(' ', UI_WIDTH - RenderingTools.GetVisibleLength(_locale.CONFIGS_COMMAND_FOOTER)));
                 break;
             default:
                 break;

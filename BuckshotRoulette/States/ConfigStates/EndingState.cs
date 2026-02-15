@@ -2,7 +2,7 @@
 
 namespace BuckshotRoulette.Simplified.States.ConfigStates;
 
-public class EndingState : IState
+public class EndingState : State
 {
     public int Handle(GlobalContext context)
     {

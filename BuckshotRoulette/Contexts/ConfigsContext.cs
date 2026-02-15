@@ -1,6 +1,7 @@
 ﻿using BuckshotRoulette.Simplified.Items;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Globalization;
 using System.Reflection;
 
 namespace BuckshotRoulette.Simplified.Contexts;
@@ -11,6 +12,7 @@ public class ConfigsContext
 
     public static readonly IReadOnlyDictionary<string, object> DefaultConfigs = new Dictionary<string, object>
     {
+        [nameof(Language)] = "en",
         [nameof(PlayerName)] = "PLAYER",
         [nameof(DealerName)] = "DEALER",
         [nameof(PlayerMaxHealth)] = 5,
@@ -51,6 +53,7 @@ public class ConfigsContext
         .ToDictionary(p => p.Name);
 
     #region Config Properties
+    public string Language { get; set; } = "";
     public string PlayerName { get; set; } = "";
     public string DealerName { get; set; } = "";
     public int PlayerMaxHealth { get; set; }
@@ -94,6 +97,7 @@ public class ConfigsContext
     /// </summary>
     public void ResetToDefault()
     {
+        Language = (string)DefaultConfigs[nameof(Language)];
         PlayerName = (string)DefaultConfigs[nameof(PlayerName)];
         DealerName = (string)DefaultConfigs[nameof(DealerName)];
         PlayerMaxHealth = (int)DefaultConfigs[nameof(PlayerMaxHealth)];
@@ -128,6 +132,7 @@ public class ConfigsContext
         new() {
             Title = "BASIC SETTINGS",
             ConfigNames = new() {
+                nameof(Language),
                 nameof(PlayerName),
                 nameof(DealerName),
             }
@@ -150,7 +155,7 @@ public class ConfigsContext
         },
         new()
         {
-            Title = "PLAYERS SETTINGS",
+            Title = "ENTITIES SETTINGS",
             ConfigNames = new() {
                 nameof(PlayerMaxHealth),
                 nameof(DealerMaxHealth),

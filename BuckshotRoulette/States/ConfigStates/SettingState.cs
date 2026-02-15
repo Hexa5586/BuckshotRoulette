@@ -2,7 +2,7 @@
 
 namespace BuckshotRoulette.Simplified.States.ConfigStates;
 
-public class SettingState : IState
+public class SettingState : State
 {
     public readonly List<string> _args;
 

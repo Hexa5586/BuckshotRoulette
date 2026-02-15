@@ -5,7 +5,7 @@ namespace BuckshotRoulette.Simplified.Renderers;
 
 public static class SplashRenderer
 {
-    public static void RenderSplashScreen(GlobalContext context)
+    public static void Render(GlobalView context)
     {
         RenderingTools.ConsoleCompletelyClear();
 
@@ -23,13 +23,15 @@ public static class SplashRenderer
         context.Render.PrintBorderedBlankLines(context.Render.GetHalvedBlankLineCount(PageType.Splash));
         
         context.Render.PrintBorderedLine(""); // Blank line for spacing
-        context.Render.PrintBorderedLine("Welcome to Buckshot Roulette! For better display, please ensure the window is MAXIMIZED.");
+        context.Render.PrintBorderedLine(context.Locale.SPLASH_LINE_CUE_1);
         context.Render.PrintBorderedLine(""); // Blank line for spacing
-        context.Render.PrintBorderedLine("You can always directly input an ENTER to refresh the UI.");
+        context.Render.PrintBorderedLine(context.Locale.SPLASH_LINE_CUE_2);
         context.Render.PrintBorderedLine(""); // Blank line for spacing
-        context.Render.PrintBorderedLine("[   START   ]   Start the game;     ");
-        context.Render.PrintBorderedLine("[  CONFIGS  ]   Edit Configurations;");
-        context.Render.PrintBorderedLine("[   CLOSE   ]   Exit the game.      ");
+        context.Render.PrintBorderedLine(context.Locale.SPLASH_OPTION_1);
+        context.Render.PrintBorderedLine(context.Locale.SPLASH_OPTION_2);
+        context.Render.PrintBorderedLine(context.Locale.SPLASH_OPTION_3);
+        context.Render.PrintBorderedLine(""); // Blank line for spacing
+        context.Render.PrintBorderedLine(context.Render.GetVersionString());
         context.Render.PrintBorderedLine(""); // Blank line for spacing
 
         // Blank lines

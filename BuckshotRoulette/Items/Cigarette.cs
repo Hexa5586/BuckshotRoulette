@@ -3,9 +3,14 @@ using System.Diagnostics;
 
 namespace BuckshotRoulette.Simplified.Items;
 
-public class Cigarette : IItem
+public class Cigarette : Item
 {
-    public string Name => "Cigarette";
+    public Cigarette(string name) : base()
+    {
+        Name = name;
+    }
+
+    public string Name { get; }
 
     public void Use(GlobalContext context, List<string> args)
     {
@@ -17,10 +22,8 @@ public class Cigarette : IItem
         }
 
         // Cannot use if health is already at max
-        int currentHealth = context.GetHealth(context.ActivePlayer);
-        int maxHealth = context.ActivePlayer == PlayerType.Player
-            ? context.PlayerMaxHealth
-            : context.DealerMaxHealth;
+        int currentHealth = context.GetActiveEntity().Health;
+        int maxHealth = context.GetActiveEntity().MaxHealth;
 
         if (currentHealth >= maxHealth)
         {
@@ -28,7 +31,7 @@ public class Cigarette : IItem
         }
 
         // Execute
-        context.AdjustHealth(context.ActivePlayer, context.CigaretteCure);
-        Debug.WriteLine($"{Name} used: Health {currentHealth} -> {context.GetHealth(context.ActivePlayer)}");
+        context.GetActiveEntity().AdjustHealth(context.Game.CigaretteCure);
+        Debug.WriteLine($"{Name} used: Health {currentHealth} -> {context.GetActiveEntity().Health}");
     }
 }
