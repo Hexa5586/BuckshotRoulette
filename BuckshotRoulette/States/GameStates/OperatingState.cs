@@ -67,20 +67,17 @@ public class OperatingState : IState
         Debug.WriteLine($"\nTurn {context.TurnCount}: {context.GetName(context.ActivePlayer)}'s turn");
         Debug.WriteLine($"Player Health: {context.GetHealth(PlayerType.Player)}/{context.PlayerMaxHealth} "
             + $"Dealer Health: {context.GetHealth(PlayerType.Dealer)}/{context.DealerMaxHealth}");
-        Debug.WriteLine($"Real Bullets Remaining: {context.GetRemainingRealCount()}/{context.GetMagazine().Count}");
+        Debug.Write("Magazine: ");
+        Debug.Write(string.Join(" ", context.GetMagazine().Select(bullet => bullet.GetAscii())));
         Debug.Write("Player Items: ");
-        OutputTools.OutputListThroughMapping(context.GetItems(PlayerType.Player), item => item.Name, " ", "\n", true);
+        Debug.WriteLine(string.Join(" ", context.GetItems(PlayerType.Player).Select(item => item.Name)));
         Debug.Write("Dealer Items: ");
-        OutputTools.OutputListThroughMapping(context.GetItems(PlayerType.Dealer), item => item.Name, " ", "\n", true);
-        if (context.ActivePlayer == PlayerType.Player)
-        {
-            Debug.Write($"{context.PlayerName}'s Knowledge: ");
-            OutputTools.OutputListThroughMapping(context.GetKnowledge(PlayerType.Player), knowledge => knowledge.GetAscii(), " ", "\n", false);
-        }
-        else
-        {
-            Debug.Write($"{context.DealerName}'s Knowledge: ");
-            OutputTools.OutputListThroughMapping(context.GetKnowledge(PlayerType.Dealer), knowledge => knowledge.GetAscii(), " ", "\n", false);
-        }
+        Debug.WriteLine(string.Join(" ", context.GetItems(PlayerType.Dealer).Select(item => item.Name)));
+
+        Debug.Write($"{context.PlayerName}'s Knowledge: ");
+        Debug.WriteLine(string.Join(" ", context.GetKnowledge(PlayerType.Player).Select(knowledge => knowledge.GetAscii())));
+        
+        Debug.Write($"{context.DealerName}'s Knowledge: ");
+        Debug.WriteLine(string.Join(" ", context.GetKnowledge(PlayerType.Dealer).Select(knowledge => knowledge.GetAscii())));
     }
 }
